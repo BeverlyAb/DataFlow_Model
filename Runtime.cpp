@@ -42,6 +42,10 @@ Class Runtime{
     Keep running globalClock;
     */
     void Run();
+
+    void tick(){
+      globalClock++;
+    }
 }
 
 Runtime::Runtime(){}
@@ -56,6 +60,7 @@ Runtime::CheckReadyToRun(){
       if(Matrix[i][j].fwdCon && !Matrix[i][j].enabled)
         allDependecyMet = false;
       j++;
+      tick();
     }
     if(allDependecyMet)
       runningPool.push_back(j);
@@ -68,13 +73,16 @@ Runtime::ScanRunningPool(){
     if(TotalNodes[nodeIndex].endTime <= globalClock){
       ReleaseData(nodeIndex);
       runningPool.erase(nodeIndex);
-      }
+    }
+
+    tick();
   }
 }
 
 Runtime::ReleaseData(int index){
   for(int j = 0; j < size; j++){
     Matrix[index][j].enabled = Matrix[index][j].fwdCon;
+    tick();
   }
 
   completedNodes.push_back(index);
@@ -88,4 +96,9 @@ Runtime::Run(){
 
   printf("All done\n Nodes Completed %d\n Total Time %d\n", 
   completedNodes.size(), globalClock);
+}
+
+int main(){
+  Runtime myRunner = new Runtime();
+  myRunner.Run();
 }

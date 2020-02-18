@@ -1,62 +1,32 @@
-#DEFINE size 10
+#include "Runtime.h"
 
-struct timeTuples{
-  double executionTime;
-  double endTime;
-};
+Runtime::Runtime(){
+TotalNodes[SIZE] =     
+    {
+      {1,2},
+      {1,3},
+      {1,4},
+      {1,5}
+    };
 
-struct boolTuples{
-  bool fwdCon;
-  bool enabled;
-};
+  Matrix[SIZE][SIZE] = 
+  {
+    { {1,1}, {0,0}, {0,0}, {0,0} },
+    { {1,0}, {0,0}, {0,0}, {0,0} },
+    { {1,1}, {0,0}, {0,0}, {0,0} },
+    { {0,0}, {1,0}, {1,0}, {0,0} }
+  };
 
-Class Runtime{
-  private:
-    timeTuples TotalNodes[size];
-    boolTuples Matrix[size][size];
-    vector<int> runningPool;
-    vector<int> completedNodes; //nodes that finished running 
-    double globalClock;
-
-  public:
-    //Constructor
-    Runtime();
-
-    /* checks Matrix if all fwdCon are enabled (while excluding
-   completedNodes).
-    adds indices to running pool */
-    void CheckReadyToRun();
-
-    /* checks if any of the running nodes finished executing. 
-    Calls release data and updates runningPool
-    */ 
-    void ScanRunningPool();
-
-    /* enables the dependencies along the col. of the index.
-    add index to completedNodes
-    */
-    void ReleaseData(int index;
-
-    /*keep iterating until # of completedNodes == size 
-    & runningPool is empty.
-    Keep running globalClock;
-    */
-    void Run();
-
-    void tick(){
-      globalClock++;
-    }
+  globalClock = 0;
 }
-
-Runtime::Runtime(){}
 
 //doesn't exclude yet
 Runtime::CheckReadyToRun(){
-  for(int i = 0; i < size; i++){
+  for(int i = 0; i < SIZE; i++){
     
     bool allDependencyMet = true;
     int j = 0;
-    while (allDependecyMet && j < size){
+    while (allDependecyMet && j < SIZE){
       if(Matrix[i][j].fwdCon && !Matrix[i][j].enabled)
         allDependecyMet = false;
       j++;
@@ -89,16 +59,11 @@ Runtime::ReleaseData(int index){
 }
 
 Runtime::Run(){
-  while(!runningPool.empty() && completedNodes.size() < size){
+  while(!runningPool.empty() && completedNodes.size() < SIZE){
     CheckReadyToRun();
     ScanRunningPool();
   }
 
   printf("All done\n Nodes Completed %d\n Total Time %d\n", 
   completedNodes.size(), globalClock);
-}
-
-int main(){
-  Runtime myRunner = new Runtime();
-  myRunner.Run();
 }

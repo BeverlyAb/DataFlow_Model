@@ -56,6 +56,10 @@ class Runtime{
       globalClock++;
     }
 
+    void setEndTime(int index){
+      TotalNodes[index].endTime = globalClock + TotalNodes[index].executionTime;
+    }
+
     //debugging methods
     void printTotalNodes();
     void printMatrix();

@@ -4,8 +4,7 @@ Runtime::Runtime(){
 
 
   for(int i = 0; i < SIZE; i++){
-    TotalNodes[i].executionTime = 1;
-    TotalNodes[i].endTime = i+2;       
+    TotalNodes[i].executionTime = 1;      
   }
 
   for(int i = 0; i < SIZE; i++){
@@ -43,6 +42,7 @@ void Runtime::CheckReadyToRun(){
           runningPool.end() == find(runningPool.begin(), runningPool.end(), i)){
 
         runningPool.push_back(i);
+        setEndTime(i);
         printf("Node pushedback %i Total size %i\n",i, runningPool.size());
       }
     }
@@ -84,6 +84,10 @@ void Runtime::Run(){
   completedNodes.size(), globalClock);
 }
 
+
+/*
+  Print Methods
+*/
 void Runtime::printTotalNodes(){
   for(int i = 0; i < SIZE; i++){
     printf("%f %f ", TotalNodes[i].executionTime, TotalNodes[i].endTime);       

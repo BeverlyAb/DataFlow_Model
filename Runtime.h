@@ -55,5 +55,6 @@ class Runtime{
     void tick(){
       globalClock++;
     }
+
 };
 #endif

@@ -9,10 +9,6 @@ Runtime::Runtime(){
   }
 
   for(int i = 0; i < SIZE; i++){
-    printf("%f %f ", TotalNodes[i].executionTime, TotalNodes[i].endTime);       
-  }
-
-  for(int i = 0; i < SIZE; i++){
     for(int j = 0; j < SIZE; j++){
       Matrix[i][j].fwdCon = 0;
       Matrix[i][j].enabled = 0;
@@ -27,50 +23,40 @@ Runtime::Runtime(){
             Matrix[i][j].fwdCon = 1;
     }
   }
-  printf("\n");
-
-  
-  for(int i = 0; i < SIZE; i++){
-    for(int j = 0; j < SIZE; j++){
-      printf("(%i %i)",Matrix[i][j].fwdCon, Matrix[i][j].enabled);
-    }
-    printf("\n");
-  }
   globalClock = 0;
 }
 
 //doesn't exclude yet
 void Runtime::CheckReadyToRun(){
   for(int i = 0; i < SIZE; i++){
-    
-    bool allDependencyMet = true;
-    int j = 0;
-    printf("Checking Node %i\n", i);
-    while (allDependencyMet && j < SIZE){
-      if(Matrix[i][j].fwdCon && !Matrix[i][j].enabled)
-        allDependencyMet = false;
-      j++;
-      tick();
-    }
-    if( allDependencyMet && 
-        runningPool.end() == find(runningPool.begin(), runningPool.end(), i)){
+    if(completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i)){
+      bool allDependencyMet = true;
+      int j = 0;
+      printf("Checking Node %i\n", i);
+      while (allDependencyMet && j < SIZE){
+        if(Matrix[i][j].fwdCon && !Matrix[i][j].enabled)
+          allDependencyMet = false;
+        j++;
+        tick();
+      }
+      if( allDependencyMet && 
+          runningPool.end() == find(runningPool.begin(), runningPool.end(), i)){
 
-      runningPool.push_back(i);
-      printf("Node pushedback %i Total size %i\n",i, runningPool.size());
+        runningPool.push_back(i);
+        printf("Node pushedback %i Total size %i\n",i, runningPool.size());
+      }
     }
   }
 }
 
 void Runtime::ScanRunningPool(){
-  // printf("SCAN: Before Loop %f\n",globalClock);
   for(int i = 0; i < runningPool.size(); i++){
     int nodeIndex = runningPool[i];
-    // printf("SCAN: Before IF %f\n",globalClock);
+    printf("SCAN: Running Pool Size %i\n",runningPool.size());
     if(TotalNodes[nodeIndex].endTime <= globalClock){
       ReleaseData(nodeIndex);
       runningPool.erase(remove(runningPool.begin(), runningPool.end(), nodeIndex), runningPool.end());
     }
-    // printf("SCAN: After loop%f\n",globalClock);
     printf("SCAN: Running Pool Size %i\n",runningPool.size());
     tick();
   }
@@ -78,8 +64,11 @@ void Runtime::ScanRunningPool(){
 
 void Runtime::ReleaseData(int index){
   for(int j = 0; j < SIZE; j++){
-  //  Matrix[index][j].enabled = Matrix[index][j].fwdCon;
-  //  printf("Releasing %i\n", Matrix[index][j]);
+    if(Matrix[j][index].fwdCon == 1){
+      Matrix[j][index].enabled = 1;
+    
+      printMatrix();
+    }
     tick();
   }
 
@@ -91,7 +80,23 @@ void Runtime::Run(){
     CheckReadyToRun();
     ScanRunningPool();
   }
-
   printf("All done\n Nodes Completed %i\n Total Time %f\n", 
   completedNodes.size(), globalClock);
+}
+
+void Runtime::printTotalNodes(){
+  for(int i = 0; i < SIZE; i++){
+    printf("%f %f ", TotalNodes[i].executionTime, TotalNodes[i].endTime);       
+  }
+  printf("\n");
+}
+
+void Runtime::printMatrix(){
+  for(int i = 0; i < SIZE; i++){
+    for(int j = 0; j < SIZE; j++){
+      printf("(%i %i)",Matrix[i][j].fwdCon, Matrix[i][j].enabled);
+    }
+    printf("\n");
+  }
+  printf("--------------------------\n");
 }

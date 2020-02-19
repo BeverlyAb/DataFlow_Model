@@ -56,5 +56,9 @@ class Runtime{
       globalClock++;
     }
 
+    //debugging methods
+    void printTotalNodes();
+    void printMatrix();
+
 };
 #endif

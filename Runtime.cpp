@@ -63,9 +63,9 @@ void Runtime::ScanRunningPool(){
 }
 
 void Runtime::ReleaseData(int index){
-  for(int j = 0; j < SIZE; j++){
-    if(Matrix[j][index].fwdCon == 1){
-      Matrix[j][index].enabled = 1;
+  for(int i = 0; i < SIZE; i++){
+    if(Matrix[i][index].fwdCon == 1){
+      Matrix[i][index].enabled = 1;
     
       printMatrix();
     }

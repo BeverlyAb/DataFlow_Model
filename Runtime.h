@@ -29,7 +29,7 @@ class Runtime{
 
   public:
     //Constructor
-    Runtime();
+    Runtime(int seed);
 
     /* checks Matrix if all fwdCon are enabled (while excluding
    completedNodes).
@@ -60,6 +60,7 @@ class Runtime{
       TotalNodes[index].endTime = globalClock + TotalNodes[index].executionTime;
     }
 
+    void setRandMatrix();
     //debugging methods
     void printTotalNodes();
     void printMatrix();

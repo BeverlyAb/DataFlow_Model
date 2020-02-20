@@ -1,16 +1,16 @@
 #include "Runtime.h"
 //g++ -o main main.o Runtime.o
 //g++ -c Runtime.cpp main.cpp
-Runtime::Runtime(int seed, int percent){
+Runtime::Runtime(int percent){
 
   //identical execution time for now
   for(int i = 0; i < SIZE; i++){
-    TotalNodes[i].executionTime = seed % 100;      
+    TotalNodes[i].executionTime = rand() % 100;      
   }
   setRandMatrix();
   printMatrix();
   globalClock = 0;
-  this->seed = seed;
+
   percentageOfCon = percent;
 }
 
@@ -70,10 +70,12 @@ void Runtime::ReleaseData(int index){
 }
 
 void Runtime::Run(){
-  while(completedNodes.size() < SIZE && !isUnReachable()){
+  while(completedNodes.size() < SIZE){
     CheckReadyToRun();
     ScanRunningPool();
     CheckReadyToRun();
+    if(!isReachable())
+      break;
   }
   printf("All done\n Nodes Completed %lu\n Total Time %f\n", 
   completedNodes.size(), globalClock);
@@ -89,7 +91,8 @@ void Runtime::setRandMatrix()
       //No deadlocks
       //No self loop (only starting loop has self loop)
       //First node has only 1 dep. which is itself
-      if(seed % 100 > percentageOfCon && !Matrix[j][i].fwdCon && i!=j && i>0){
+      
+      if(/*rand() % 100 > percentageOfCon &&*/ Matrix[j][i].fwdCon !=  1 &&  i!=j && i>0){
         Matrix[i][j].fwdCon = 1;
       } else
       {
@@ -123,26 +126,20 @@ void Runtime::printMatrix(){
   printf("--------------------------\n");
 }
 
-bool Runtime::isUnReachable(){
-  if( runningPool.size()==0 &&
-      completedNodes.end() != find(completedNodes.begin(), completedNodes.end(), 0)){
+bool Runtime::isReachable(){
+  if(runningPool.size()==0){
     for(int i = 0; i < SIZE; i++){
       if(completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i)){
         
-        int depCount = 0;
         for(int j = 0; j < SIZE; j++){
-          if(Matrix[i][j].fwdCon == 1 && Matrix[i][j].enabled == 0){
-          //  printf("(%i %i)\n",i,j);
-            depCount++;
-          }
-        }
-
-        if(depCount==1){
-          printf("isUnreachable\n");
-          return true;
+          if( Matrix[i][j].fwdCon && !Matrix[i][j].enabled &&
+              find(runningPool.begin(), runningPool.end(), j) != runningPool.end() )
+              return true;
         }
       }
     }
-  }
-  return false;
+    printf("Unreachable\n");
+    return false;
+  } else
+  return true;
 }

@@ -2,10 +2,9 @@
 #ifndef RUNTIME_H
 #define RUNTIME_H
 
-#define SIZE 4
+#define SIZE 5
+#include <stdlib.h>
 #include <vector>
-#include "MatrixGen.h"
-
 using namespace std;
 
 class Runtime{
@@ -23,16 +22,16 @@ class Runtime{
   private:
     struct timeTuples TotalNodes[SIZE];
     struct boolTuples Matrix[SIZE][SIZE];
-    int seed;
-    int percentageOfCon;
 
+
+    int percentageOfCon;
     vector<int> runningPool;
     vector<int> completedNodes; //nodes that finished running 
     double globalClock;
 
   public:
     //Constructor
-    Runtime(int seed, int percent);
+    Runtime(int percent);
 
     /* checks Matrix if all fwdCon are enabled (while excluding
    completedNodes).
@@ -64,7 +63,7 @@ class Runtime{
     }
 
     void setRandMatrix();
-    bool isUnReachable();
+    bool isReachable();
     //debugging methods
     void printTotalNodes();
     void printMatrix();

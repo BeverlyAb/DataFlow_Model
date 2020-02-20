@@ -2,7 +2,7 @@
 #ifndef RUNTIME_H
 #define RUNTIME_H
 
-#define SIZE 6
+#define SIZE 4
 #include <vector>
 #include "MatrixGen.h"
 

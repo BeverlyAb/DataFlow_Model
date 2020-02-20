@@ -5,7 +5,7 @@ Runtime::Runtime(int seed, int percent){
 
   //identical execution time for now
   for(int i = 0; i < SIZE; i++){
-    TotalNodes[i].executionTime = 1;      
+    TotalNodes[i].executionTime = seed % 100;      
   }
   setRandMatrix();
   printMatrix();
@@ -85,15 +85,6 @@ void Runtime::setRandMatrix()
     for(int j = 0; j < SIZE; j++){
       //all disabled except for 1st node  
       Matrix[i][j].enabled = 0;
-
-      // Debugging Start
-      /*if( (i == 0 && j == 0) || 
-          (i == 1 && j == 0) ||
-          (i == 2 && j == 0) || 
-          (i == 3 && j == 1)||
-          (i == 3 && j == 2))
-            Matrix[i][j].fwdCon = 1;
-      */
       //randomly assign forward con
       //No deadlocks
       //No self loop (only starting loop has self loop)
@@ -141,7 +132,7 @@ bool Runtime::isUnReachable(){
         int depCount = 0;
         for(int j = 0; j < SIZE; j++){
           if(Matrix[i][j].fwdCon == 1 && Matrix[i][j].enabled == 0){
-            printf("(%i %i)\n",i,j);
+          //  printf("(%i %i)\n",i,j);
             depCount++;
           }
         }

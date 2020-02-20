@@ -5,7 +5,7 @@
 // #define SIZE 4
 int main(){
   srand(time(NULL));
-  Runtime myRunner = Runtime(rand());
+  Runtime myRunner = Runtime(rand(),50);
   myRunner.Run();
 
   // MatrixGen myMat = MatrixGen(SIZE);

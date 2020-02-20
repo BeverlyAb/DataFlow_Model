@@ -24,6 +24,7 @@ class Runtime{
     struct timeTuples TotalNodes[SIZE];
     struct boolTuples Matrix[SIZE][SIZE];
     int seed;
+    int percentageOfCon;
 
     vector<int> runningPool;
     vector<int> completedNodes; //nodes that finished running 
@@ -31,7 +32,7 @@ class Runtime{
 
   public:
     //Constructor
-    Runtime(int seed);
+    Runtime(int seed, int percent);
 
     /* checks Matrix if all fwdCon are enabled (while excluding
    completedNodes).
@@ -63,6 +64,7 @@ class Runtime{
     }
 
     void setRandMatrix();
+    bool isUnReachable();
     //debugging methods
     void printTotalNodes();
     void printMatrix();

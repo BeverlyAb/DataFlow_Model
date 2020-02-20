@@ -1,7 +1,7 @@
 #include "Runtime.h"
 //g++ -o main main.o Runtime.o
 //g++ -c Runtime.cpp main.cpp
-Runtime::Runtime(int seed){
+Runtime::Runtime(int seed, int percent){
 
   //identical execution time for now
   for(int i = 0; i < SIZE; i++){
@@ -11,6 +11,7 @@ Runtime::Runtime(int seed){
   printMatrix();
   globalClock = 0;
   this->seed = seed;
+  percentageOfCon = percent;
 }
 
 //excludes completedNodes. note that nodes without any fwdCon are "ready to run"
@@ -69,9 +70,10 @@ void Runtime::ReleaseData(int index){
 }
 
 void Runtime::Run(){
-  while(completedNodes.size() < SIZE){
+  while(completedNodes.size() < SIZE && !isUnReachable()){
     CheckReadyToRun();
     ScanRunningPool();
+    CheckReadyToRun();
   }
   printf("All done\n Nodes Completed %lu\n Total Time %f\n", 
   completedNodes.size(), globalClock);
@@ -96,7 +98,7 @@ void Runtime::setRandMatrix()
       //No deadlocks
       //No self loop (only starting loop has self loop)
       //First node has only 1 dep. which is itself
-      if(seed % 100 > 80 && !Matrix[j][i].fwdCon && i!=j && i>0){
+      if(seed % 100 > percentageOfCon && !Matrix[j][i].fwdCon && i!=j && i>0){
         Matrix[i][j].fwdCon = 1;
       } else
       {
@@ -128,4 +130,28 @@ void Runtime::printMatrix(){
     printf("\n");
   }
   printf("--------------------------\n");
+}
+
+bool Runtime::isUnReachable(){
+  if( runningPool.size()==0 &&
+      completedNodes.end() != find(completedNodes.begin(), completedNodes.end(), 0)){
+    for(int i = 0; i < SIZE; i++){
+      if(completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i)){
+        
+        int depCount = 0;
+        for(int j = 0; j < SIZE; j++){
+          if(Matrix[i][j].fwdCon == 1 && Matrix[i][j].enabled == 0){
+            printf("(%i %i)\n",i,j);
+            depCount++;
+          }
+        }
+
+        if(depCount==1){
+          printf("isUnreachable\n");
+          return true;
+        }
+      }
+    }
+  }
+  return false;
 }

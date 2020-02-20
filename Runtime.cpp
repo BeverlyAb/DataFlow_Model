@@ -1,5 +1,6 @@
 #include "Runtime.h"
-
+//g++ -o main main.o Runtime.o
+//g++ -c Runtime.cpp main.cpp
 Runtime::Runtime(int seed){
 
   //identical execution time for now
@@ -9,6 +10,7 @@ Runtime::Runtime(int seed){
   setRandMatrix();
   printMatrix();
   globalClock = 0;
+  this->seed = seed;
 }
 
 //excludes completedNodes. note that nodes without any fwdCon are "ready to run"
@@ -77,11 +79,7 @@ void Runtime::Run(){
 
 void Runtime::setRandMatrix()
 {
-  //Starting Node is always enabled and ready to start
-  Matrix[0][0].enabled = 1;
-  Matrix[0][0].fwdCon = 1;  
-
-  for(int i = 1; i < SIZE; i++){
+  for(int i = 0; i < SIZE; i++){
     for(int j = 0; j < SIZE; j++){
       //all disabled except for 1st node  
       Matrix[i][j].enabled = 0;
@@ -95,10 +93,22 @@ void Runtime::setRandMatrix()
             Matrix[i][j].fwdCon = 1;
       */
       //randomly assign forward con
-      if(seed % 100 > 80)
-            Matrix[i][j].fwdCon = 1; 
+      //No deadlocks
+      //No self loop (only starting loop has self loop)
+      //First node has only 1 dep. which is itself
+      if(seed % 100 > 80 && !Matrix[j][i].fwdCon && i!=j && i>0){
+        Matrix[i][j].fwdCon = 1;
+      } else
+      {
+        Matrix[i][j].fwdCon = 0;
+      }
+      
     }
   }
+
+  //Starting Node is always enabled and ready to start
+  Matrix[0][0].enabled = 1;
+  Matrix[0][0].fwdCon = 1;  
 }
 /*
   Print Methods

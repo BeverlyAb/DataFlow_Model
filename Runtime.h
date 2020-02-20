@@ -2,8 +2,9 @@
 #ifndef RUNTIME_H
 #define RUNTIME_H
 
-#define SIZE 4
+#define SIZE 6
 #include <vector>
+#include "MatrixGen.h"
 
 using namespace std;
 
@@ -22,6 +23,7 @@ class Runtime{
   private:
     struct timeTuples TotalNodes[SIZE];
     struct boolTuples Matrix[SIZE][SIZE];
+    int seed;
 
     vector<int> runningPool;
     vector<int> completedNodes; //nodes that finished running 

@@ -35,10 +35,10 @@ void Runtime::CheckReadyToRun(){
           runningPool.end() == find(runningPool.begin(), runningPool.end(), i)){
 
         runningPool.push_back(i);
-        printf("Time %f : ", globalClock);
+        //printf("Time %f : ", globalClock);
         printTotalNodes();
         setEndTime(i);
-        printf("Node pushedback %i Total size %lu\n",i, runningPool.size());
+        //printf("Node pushedback %i Total size %lu\n",i, runningPool.size());
       }
     }
   }
@@ -47,15 +47,14 @@ void Runtime::CheckReadyToRun(){
 void Runtime::ScanRunningPool(){
   for(int i = 0; i < runningPool.size(); i++){
     int nodeIndex = runningPool[i];
-    printf("SCAN: Running Pool Size %lu\n",runningPool.size());
+
     if(TotalNodes[nodeIndex].endTime <= globalClock){
       ReleaseData(nodeIndex);
       runningPool.erase(remove(runningPool.begin(), runningPool.end(), nodeIndex), runningPool.end());
     
-      printf("Time %f : ", globalClock);
+      //printf("Time %f : ", globalClock);
       printTotalNodes();
     }
-    printf("SCAN: Running Pool Size %lu\n",runningPool.size());
    // tick();
   }
 }

@@ -3,23 +3,19 @@
 //g++ -c Runtime.cpp main.cpp
 Runtime::Runtime(){
     globalClock = 0;
-    percentageOfCon = 0;
+    percentageOfCon = 0; 
 }
 
 Runtime::Runtime( int percent){
 
-  //identical execution time for now
   for(int i = 0; i < SIZE; i++){
     TotalNodes[i].executionTime = rand() % 100; 
     TotalNodes[i].endTime = 0;     
   }
   percentageOfCon = percent;
-  printf("PercentageOfCon %d ",percentageOfCon);
   setRandMatrix();
   printMatrix();
   globalClock = 0;
-
-
 }
 
 //excludes completedNodes. note that nodes without any fwdCon are "ready to run"
@@ -28,7 +24,7 @@ void Runtime::CheckReadyToRun(){
     if(completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i)){
       bool allDependencyMet = true;
       int j = 0;
-     //  printf("Checking Node %i\n", i);
+
       while (allDependencyMet && j < SIZE){
         if(Matrix[i][j].fwdCon && !Matrix[i][j].enabled)
           allDependencyMet = false;
@@ -100,7 +96,6 @@ void Runtime::setRandMatrix()
       //No deadlocks
       //No self loop (only starting loop has self loop)
       //First node has only 1 dep. which is itself
-      
       //if(rand() % 100 > percentageOfCon && Matrix[j][i].fwdCon != 1 && i!=j && i>0){
       //  Matrix[i][j].fwdCon = 1;
     //  }
@@ -116,8 +111,6 @@ void Runtime::setRandMatrix()
        }
     }
   } 
-
-
   //Starting Node is always enabled and ready to start
   Matrix[0][0].enabled = 1;
   Matrix[0][0].fwdCon = 1;  
@@ -126,20 +119,20 @@ void Runtime::setRandMatrix()
   Print Methods
 */
 void Runtime::printTotalNodes(){
-  for(int i = 0; i < SIZE; i++){
-    printf("(%f %f )", TotalNodes[i].executionTime, TotalNodes[i].endTime);       
-  }
-  printf("\n");
+  // for(int i = 0; i < SIZE; i++){
+  //   printf("(%f %f )", TotalNodes[i].executionTime, TotalNodes[i].endTime);       
+  // }
+  // printf("\n");
 }
 
 void Runtime::printMatrix(){
-  for(int i = 0; i < SIZE; i++){
-    for(int j = 0; j < SIZE; j++){
-      printf("(%i %i)",Matrix[i][j].fwdCon, Matrix[i][j].enabled);
-    }
-    printf("\n");
-  }
-  printf("--------------------------\n");
+  // for(int i = 0; i < SIZE; i++){
+  //   for(int j = 0; j < SIZE; j++){
+  //     printf("(%i %i)",Matrix[i][j].fwdCon, Matrix[i][j].enabled);
+  //   }
+  //   printf("\n");
+  // }
+  // printf("--------------------------\n");
 }
 
 bool Runtime::isReachable(){

@@ -4,7 +4,7 @@
 int main(){
   //srand(time(NULL));
 
-  Runtime myRunner =  Runtime(50);
+  Runtime myRunner =  Runtime(50);//% of fwdCon
   myRunner.Run();
   return 0;
 }

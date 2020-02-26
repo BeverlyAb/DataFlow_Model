@@ -5,7 +5,8 @@ Runtime::Runtime(int percent){
 
   //identical execution time for now
   for(int i = 0; i < SIZE; i++){
-    TotalNodes[i].executionTime = rand() % 100;      
+    TotalNodes[i].executionTime = rand() % 100; 
+    TotalNodes[i].endTime = 0;     
   }
   setRandMatrix();
   printMatrix();
@@ -92,7 +93,7 @@ void Runtime::setRandMatrix()
       //No self loop (only starting loop has self loop)
       //First node has only 1 dep. which is itself
       
-      if(/*rand() % 100 > percentageOfCon &&*/ Matrix[j][i].fwdCon !=  1 &&  i!=j && i>0){
+      if(/*rand() % 100 > percentageOfCon &&*/ Matrix[j][i].fwdCon != 1 && i!=j && i>0){
         Matrix[i][j].fwdCon = 1;
       } else
       {
@@ -127,7 +128,7 @@ void Runtime::printMatrix(){
 }
 
 bool Runtime::isReachable(){
-  if(runningPool.size()==0){
+  if(runningPool.size()==0 && completedNodes.size() != SIZE){
     for(int i = 0; i < SIZE; i++){
       if(completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i)){
         

@@ -9,7 +9,7 @@ Runtime::Runtime(){
 Runtime::Runtime( int percent){
 
   for(int i = 0; i < SIZE; i++){
-    TotalNodes[i].executionTime = rand() % 100; 
+    TotalNodes[i].executionTime = rand() % 10; 
     TotalNodes[i].startedRunning = 0;
     TotalNodes[i].endTime = 0;     
   }
@@ -30,7 +30,7 @@ void Runtime::CheckReadyToRun(){
         if(Matrix[i][j].fwdCon && !Matrix[i][j].enabled)
           allDependencyMet = false;
         j++;
-        tick();
+        //tick();
       }
       if( allDependencyMet && 
           runningPool.end() == find(runningPool.begin(), runningPool.end(), i)){
@@ -57,7 +57,7 @@ void Runtime::ScanRunningPool(){
       //printf("Time %f : ", globalClock);
     //  printTotalNodes();
     }
-   // tick();
+    tick();
   }
 }
 
@@ -85,6 +85,7 @@ void Runtime::Run(){
   printf("All done\n Nodes Completed %lu\n Total Time %f\n", 
   completedNodes.size(), globalClock);
   printTotalNodes();
+  exportToCSV();
 }
 
 void Runtime::setRandMatrix()
@@ -122,7 +123,7 @@ for(int i = 0; i < N; i++) {
 */
 void Runtime::printTotalNodes(){
   for(int i = 0; i < SIZE; i++){
-    printf("(%f %f %f )", TotalNodes[i].executionTime, TotalNodes[i].startedRunning,TotalNodes[i].endTime);       
+    printf("%f,\t%f,\t%f\n", TotalNodes[i].executionTime, TotalNodes[i].startedRunning,TotalNodes[i].endTime);       
   }
   printf("\n");
 }
@@ -153,4 +154,14 @@ bool Runtime::isReachable(){
     return false;
   } else
   return true;
+}
+
+void Runtime::exportToCSV()
+{
+  ofstream myfile;
+  myfile.open ("TEST.csv");
+  myfile << "Execution Time, Start Time, End Time\n";
+  for(int i=0; i <SIZE; i++)
+    myfile << TotalNodes[i].executionTime << "," << TotalNodes[i].startedRunning <<"," <<TotalNodes[i].endTime << "\n";
+  myfile.close(); 
 }

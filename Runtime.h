@@ -5,6 +5,7 @@
 #define SIZE 10
 #include <stdlib.h>
 #include <vector>
+#include <fstream>
 using namespace std;
 
 class Runtime{
@@ -66,6 +67,7 @@ class Runtime{
 
     void setRandMatrix();
     bool isReachable();
+    void exportToCSV();
     //debugging methods
     void printTotalNodes();
     void printMatrix();

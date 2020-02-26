@@ -2,7 +2,7 @@
 #ifndef RUNTIME_H
 #define RUNTIME_H
 
-#define SIZE 1000
+#define SIZE 10
 #include <stdlib.h>
 #include <vector>
 using namespace std;

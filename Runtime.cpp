@@ -10,6 +10,7 @@ Runtime::Runtime( int percent){
 
   for(int i = 0; i < SIZE; i++){
     TotalNodes[i].executionTime = rand() % 100; 
+    TotalNodes[i].startedRunning = 0;
     TotalNodes[i].endTime = 0;     
   }
   percentageOfCon = percent;
@@ -35,6 +36,7 @@ void Runtime::CheckReadyToRun(){
           runningPool.end() == find(runningPool.begin(), runningPool.end(), i)){
 
         runningPool.push_back(i);
+        
         //printf("Time %f : ", globalClock);
       //  printTotalNodes();
         setEndTime(i);
@@ -82,6 +84,7 @@ void Runtime::Run(){
   }
   printf("All done\n Nodes Completed %lu\n Total Time %f\n", 
   completedNodes.size(), globalClock);
+  printTotalNodes();
 }
 
 void Runtime::setRandMatrix()
@@ -119,7 +122,7 @@ for(int i = 0; i < N; i++) {
 */
 void Runtime::printTotalNodes(){
   for(int i = 0; i < SIZE; i++){
-    printf("(%f %f )", TotalNodes[i].executionTime, TotalNodes[i].endTime);       
+    printf("(%f %f %f )", TotalNodes[i].executionTime, TotalNodes[i].startedRunning,TotalNodes[i].endTime);       
   }
   printf("\n");
 }

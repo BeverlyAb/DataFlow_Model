@@ -11,6 +11,7 @@ class Runtime{
 
   struct timeTuples{
     double executionTime;
+    double startedRunning;
     double endTime;
   };
 
@@ -57,8 +58,9 @@ class Runtime{
     void tick(){
       globalClock++;
     }
-
+    //sets Time to end and triggers when it began running
     void setEndTime(int index){
+      TotalNodes[index].startedRunning = globalClock;
       TotalNodes[index].endTime = globalClock + TotalNodes[index].executionTime;
     }
 

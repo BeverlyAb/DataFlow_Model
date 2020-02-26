@@ -2,7 +2,7 @@
 #ifndef RUNTIME_H
 #define RUNTIME_H
 
-#define SIZE 5
+#define SIZE 40
 #include <stdlib.h>
 #include <vector>
 using namespace std;
@@ -23,13 +23,13 @@ class Runtime{
     struct timeTuples TotalNodes[SIZE];
     struct boolTuples Matrix[SIZE][SIZE];
 
-
     int percentageOfCon;
     vector<int> runningPool;
     vector<int> completedNodes; //nodes that finished running 
     double globalClock;
 
   public:
+    Runtime();
     //Constructor
     Runtime(int percent);
 

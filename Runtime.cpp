@@ -1,18 +1,25 @@
 #include "Runtime.h"
 //g++ -o main main.o Runtime.o
 //g++ -c Runtime.cpp main.cpp
-Runtime::Runtime(int percent){
+Runtime::Runtime(){
+    globalClock = 0;
+    percentageOfCon = 0;
+}
+
+Runtime::Runtime( int percent){
 
   //identical execution time for now
   for(int i = 0; i < SIZE; i++){
     TotalNodes[i].executionTime = rand() % 100; 
     TotalNodes[i].endTime = 0;     
   }
+  percentageOfCon = percent;
+  printf("PercentageOfCon %d ",percentageOfCon);
   setRandMatrix();
   printMatrix();
   globalClock = 0;
 
-  percentageOfCon = percent;
+
 }
 
 //excludes completedNodes. note that nodes without any fwdCon are "ready to run"
@@ -88,20 +95,28 @@ void Runtime::setRandMatrix()
     for(int j = 0; j < SIZE; j++){
       //all disabled except for 1st node  
       Matrix[i][j].enabled = 0;
+      Matrix[i][j].fwdCon = 0;
       //randomly assign forward con
       //No deadlocks
       //No self loop (only starting loop has self loop)
       //First node has only 1 dep. which is itself
       
-      if(/*rand() % 100 > percentageOfCon &&*/ Matrix[j][i].fwdCon != 1 && i!=j && i>0){
-        Matrix[i][j].fwdCon = 1;
-      } else
-      {
-        Matrix[i][j].fwdCon = 0;
-      }
-      
+      //if(rand() % 100 > percentageOfCon && Matrix[j][i].fwdCon != 1 && i!=j && i>0){
+      //  Matrix[i][j].fwdCon = 1;
+    //  }
     }
   }
+  int N = SIZE;
+  //debug online
+  for(int i = N; i > 0; i--) {
+    for (int j = N; j > i+ 1; j--) {
+      int percent = rand() % 100;
+       if(percent < percentageOfCon){
+        Matrix[i][j].fwdCon = 1;
+       }
+    }
+  } 
+
 
   //Starting Node is always enabled and ready to start
   Matrix[0][0].enabled = 1;

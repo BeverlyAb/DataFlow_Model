@@ -3,7 +3,8 @@
 
 int main(){
   //srand(time(NULL));
-  Runtime myRunner = Runtime(50);
+
+  Runtime myRunner =  Runtime(50);
   myRunner.Run();
   return 0;
 }

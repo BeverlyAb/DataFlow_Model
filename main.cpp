@@ -2,7 +2,7 @@
 
 
 int main(){
-  Runtime myRunner =  Runtime(100);//% of fwdCon
+  Runtime myRunner =  Runtime(20);//% of fwdCon
   myRunner.Run();
   return 0;
 }

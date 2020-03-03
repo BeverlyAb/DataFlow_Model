@@ -1,21 +1,21 @@
-//MatrixGen.h
-#ifndef MATRIXGEN_H
-#define MATRIXGEN_H
+// //MatrixGen.h
+// #ifndef MATRIXGEN_H
+// #define MATRIXGEN_H
 
-#include <vector>
+// #include <vector>
 
-using namespace std;
+// using namespace std;
 
-class MatrixGen{
-  struct boolTuples{
-    bool fwdCon;
-    bool enabled;
-  };
-  private:
-    int size;
+// class MatrixGen{
+//   struct boolTuples{
+//     bool fwdCon;
+//     bool enabled;
+//   };
+//   private:
+//     int size;
 
-  public: 
-    MatrixGen(int s);
-    struct boolTuples ** getMatrix();
-};
-#endif
+//   public: 
+//     MatrixGen(int s);
+//     struct boolTuples ** getMatrix();
+// };
+// #endif

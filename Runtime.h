@@ -2,7 +2,7 @@
 #ifndef RUNTIME_H
 #define RUNTIME_H
 
-#define SIZE 10
+#define SIZE 4
 #include <stdlib.h>
 #include <vector>
 #include <fstream>
@@ -14,6 +14,8 @@ class Runtime{
     double executionTime;
     double startedRunning;
     double endTime;
+    //
+    double expirationTime;
   };
 
   struct boolTuples{
@@ -59,14 +61,21 @@ class Runtime{
     void tick(){
       globalClock++;
     }
-    //sets Time to end and triggers when it began running
+    //sets Time to end and expiration and triggers when it began running
     void setEndTime(int index){
       TotalNodes[index].startedRunning = globalClock;
       TotalNodes[index].endTime = globalClock + TotalNodes[index].executionTime;
+      TotalNodes[index].expirationTime = globalClock + TotalNodes[index].expirationTime;
     }
 
+    /* generates DAG with randomly assigned connections */
     void setRandMatrix();
+    /* checks if DAG can run to completion given random dependencies */
     bool isReachable();
+    
+    /*node refires when it expires before it completes it execution. Expiration time gets doubled*/
+    bool reFire(int index);
+
     void exportToCSV();
     //debugging methods
     void printTotalNodes();

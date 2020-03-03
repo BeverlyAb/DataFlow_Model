@@ -1,12 +1,12 @@
-//MatrixGen.cpp
+// //MatrixGen.cpp
 
-#include "MatrixGen.h"
+// #include "MatrixGen.h"
 
-MatrixGen::MatrixGen(int s){
-  size = s;
-}
+// MatrixGen::MatrixGen(int s){
+//   size = s;
+// }
 
-MatrixGen::boolTuples ** MatrixGen::getMatrix(){
-  struct boolTuples ** Matrix = new struct boolTuples * [size];
-  return Matrix;
-}
+// MatrixGen::boolTuples ** MatrixGen::getMatrix(){
+//   struct boolTuples ** Matrix = new struct boolTuples * [size];
+//   return Matrix;
+// }

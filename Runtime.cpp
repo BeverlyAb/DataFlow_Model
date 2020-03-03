@@ -11,11 +11,12 @@ Runtime::Runtime( int percent){
   for(int i = 0; i < SIZE; i++){
     TotalNodes[i].executionTime = rand() % 10; 
     TotalNodes[i].startedRunning = 0;
-    TotalNodes[i].endTime = 0;     
+    TotalNodes[i].endTime = 0;   
+    TotalNodes[i].expirationTime = rand() % 11;  
   }
   percentageOfCon = percent;
   setRandMatrix();
-  printMatrix();
+  //printMatrix();
   globalClock = 0;
 }
 
@@ -51,11 +52,13 @@ void Runtime::ScanRunningPool(){
     int nodeIndex = runningPool[i];
 
     if(TotalNodes[nodeIndex].endTime <= globalClock){
-      ReleaseData(nodeIndex);
-      runningPool.erase(remove(runningPool.begin(), runningPool.end(), nodeIndex), runningPool.end());
-    
-      //printf("Time %f : ", globalClock);
-    //  printTotalNodes();
+      if(!reFire(nodeIndex)){
+        ReleaseData(nodeIndex);
+        runningPool.erase(remove(runningPool.begin(), runningPool.end(), nodeIndex), runningPool.end());
+      
+        //printf("Time %f : ", globalClock);
+      //  printTotalNodes();
+      }
     }
     tick();
   }
@@ -84,7 +87,7 @@ void Runtime::Run(){
   }
   printf("All done\n Nodes Completed %lu\n Total Time %f\n", 
   completedNodes.size(), globalClock);
-  printTotalNodes();
+  //printTotalNodes();
   exportToCSV();
 }
 
@@ -118,8 +121,18 @@ for(int i = 0; i < N; i++) {
   Matrix[0][0].enabled = 1;
   Matrix[0][0].fwdCon = 1;  
 }
+
+bool Runtime::reFire(int index){
+  if(TotalNodes[index].endTime > TotalNodes[index].expirationTime){
+    TotalNodes[index].expirationTime = globalClock + 2*TotalNodes[index].expirationTime;
+    printf("REFIRED %i\n", index);
+    return true;
+  } else
+    return false; 
+}
+
 /*
-  Print Methods
+ ---------- Print Methods ------------------------------------------------------------------------------------
 */
 void Runtime::printTotalNodes(){
   for(int i = 0; i < SIZE; i++){
@@ -159,9 +172,9 @@ bool Runtime::isReachable(){
 void Runtime::exportToCSV()
 {
   ofstream myfile;
-  myfile.open ("TEST.csv");
-  myfile << "Execution Time, Start Time, End Time\n";
+  myfile.open ("TEST2.csv");
+  myfile << "NodeID, Execution Time, Start Time, End Time\n";
   for(int i=0; i <SIZE; i++)
-    myfile << TotalNodes[i].executionTime << "," << TotalNodes[i].startedRunning <<"," <<TotalNodes[i].endTime << "\n";
+    myfile << i << "," << TotalNodes[i].executionTime << "," << TotalNodes[i].startedRunning <<"," <<TotalNodes[i].endTime << "\n";
   myfile.close(); 
 }

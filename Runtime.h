@@ -1,6 +1,7 @@
 //Runtime.h
 #ifndef RUNTIME_H
 #define RUNTIME_H
+#define DEBUG_TEST 1
 
 #define SIZE 4
 #include <stdlib.h>

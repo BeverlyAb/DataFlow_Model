@@ -8,15 +8,16 @@ Runtime::Runtime(){
 
 Runtime::Runtime( int percent){
 
+  int setExpireTime = rand()%9;
   for(int i = 0; i < SIZE; i++){
     TotalNodes[i].executionTime = rand() % 10; 
     TotalNodes[i].startedRunning = 0;
     TotalNodes[i].endTime = 0;   
-    TotalNodes[i].expirationTime = rand() % 11;  
+    TotalNodes[i].expirationTime = setExpireTime;  
   }
   percentageOfCon = percent;
   setRandMatrix();
-  //printMatrix();
+  printMatrix();
   globalClock = 0;
 }
 
@@ -38,8 +39,10 @@ void Runtime::CheckReadyToRun(){
 
         runningPool.push_back(i);
         
-        //printf("Time %f : ", globalClock);
-      //  printTotalNodes();
+        if (DEBUG_TEST){
+          printf("Time %f : \n", globalClock);
+          printTotalNodes();
+        }
         setEndTime(i);
         //printf("Node pushedback %i Total size %lu\n",i, runningPool.size());
       }
@@ -56,7 +59,10 @@ void Runtime::ScanRunningPool(){
         ReleaseData(nodeIndex);
         runningPool.erase(remove(runningPool.begin(), runningPool.end(), nodeIndex), runningPool.end());
       
-        //printf("Time %f : ", globalClock);
+        if (DEBUG_TEST){
+          printf("Time %f : \n", globalClock);
+          printf("Node: %i , size = %lu\n", nodeIndex, runningPool.size());
+        }
       //  printTotalNodes();
       }
     }
@@ -69,7 +75,8 @@ void Runtime::ReleaseData(int index){
     if(Matrix[i][index].fwdCon == 1){
       Matrix[i][index].enabled = 1;
     
-    //  printMatrix();
+      if (DEBUG_TEST)
+        printMatrix();
     }
    // tick();
   }
@@ -87,7 +94,10 @@ void Runtime::Run(){
   }
   printf("All done\n Nodes Completed %lu\n Total Time %f\n", 
   completedNodes.size(), globalClock);
-  //printTotalNodes();
+  
+  if(DEBUG_TEST)
+    printTotalNodes();
+
   exportToCSV();
 }
 
@@ -135,8 +145,9 @@ bool Runtime::reFire(int index){
  ---------- Print Methods ------------------------------------------------------------------------------------
 */
 void Runtime::printTotalNodes(){
+  printf("ID\t Exec.\t\t Expire\t\t Start\t\t End\n");
   for(int i = 0; i < SIZE; i++){
-    printf("%f,\t%f,\t%f\n", TotalNodes[i].executionTime, TotalNodes[i].startedRunning,TotalNodes[i].endTime);       
+    printf("%i:\t%f,\t%f,\t%f\t%f\n", i, TotalNodes[i].executionTime, TotalNodes[i].expirationTime, TotalNodes[i].startedRunning,TotalNodes[i].endTime);       
   }
   printf("\n");
 }

@@ -3,7 +3,7 @@
 #define RUNTIME_H
 #define DEBUG_TEST 1
 
-#define SIZE 4
+#define SIZE 8
 #include <stdlib.h>
 #include <vector>
 #include <fstream>
@@ -63,11 +63,7 @@ class Runtime{
       globalClock++;
     }
     //sets Time to end and expiration and triggers when it began running
-    void setEndTime(int index){
-      TotalNodes[index].startedRunning = globalClock;
-      TotalNodes[index].endTime = globalClock + TotalNodes[index].executionTime;
-      TotalNodes[index].expirationTime = globalClock + TotalNodes[index].expirationTime;
-    }
+    void setEndTime(int index);
 
     /* generates DAG with randomly assigned connections */
     void setRandMatrix();

@@ -101,6 +101,19 @@ void Runtime::Run(){
   exportToCSV();
 }
 
+void Runtime::setEndTime(int index)
+{
+  TotalNodes[index].startedRunning = globalClock;
+
+  if(TotalNodes[index].executionTime <= TotalNodes[index].expirationTime)
+    TotalNodes[index].endTime = TotalNodes[index].startedRunning + TotalNodes[index].executionTime;
+  else
+  {
+    TotalNodes[index].endTime = TotalNodes[index].startedRunning + TotalNodes[index].expirationTime;
+  }
+  
+}
+
 void Runtime::setRandMatrix()
 {
   for(int i = 0; i < SIZE; i++){
@@ -133,9 +146,17 @@ for(int i = 0; i < N; i++) {
 }
 
 bool Runtime::reFire(int index){
-  if(TotalNodes[index].endTime > TotalNodes[index].expirationTime){
-    TotalNodes[index].expirationTime = globalClock + 2*TotalNodes[index].expirationTime;
+  if(TotalNodes[index].executionTime > TotalNodes[index].expirationTime){
+    TotalNodes[index].expirationTime *= 2;
+    TotalNodes[index].startedRunning = globalClock;
+    
+    setEndTime(index);
     printf("REFIRED %i\n", index);
+    
+    if(DEBUG_TEST) {
+      
+      printTotalNodes();
+    }
     return true;
   } else
     return false; 
@@ -145,6 +166,7 @@ bool Runtime::reFire(int index){
  ---------- Print Methods ------------------------------------------------------------------------------------
 */
 void Runtime::printTotalNodes(){
+   printf("Time %f : \n", globalClock);
   printf("ID\t Exec.\t\t Expire\t\t Start\t\t End\n");
   for(int i = 0; i < SIZE; i++){
     printf("%i:\t%f,\t%f,\t%f\t%f\n", i, TotalNodes[i].executionTime, TotalNodes[i].expirationTime, TotalNodes[i].startedRunning,TotalNodes[i].endTime);       

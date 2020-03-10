@@ -179,9 +179,9 @@ bool Runtime::reFire(int index){
 */
 void Runtime::printTotalNodes(){
   printf("Time %f : \n", globalClock);
-  printf("ID\tEnd Time\tExpire\t\tExec. Time\tStart Time\n");
+  printf("NodeID\tEnd Time\tProcID\tExpire\t\tExec. Time\tStart Time\n");
   for(int i = 0; i < SIZE; i++){
-    printf("%i:\t%f,\t%f,\t%f,\t%f\n,", i,TotalNodes[i].endTime, TotalNodes[i].expirationTime, TotalNodes[i].executionTime, TotalNodes[i].startedRunning);       
+    printf("%i:\t%f,\t%i,\t%f,\t%f,\t%f\n", i,TotalNodes[i].endTime, procList.find(i)->second.getID(), TotalNodes[i].expirationTime, TotalNodes[i].executionTime, TotalNodes[i].startedRunning);       
   }
   printf("\n");
 }
@@ -220,8 +220,18 @@ void Runtime::exportToCSV()
   Time curTime = Time();
   string fileName = "N" + to_string(SIZE) + "-" + curTime.getTime() + ".csv";
   myfile.open (fileName);
-  myfile << "NodeID,  End Time, Expiration Time, Execution Time, Start Time\n";
-  for(int i=0; i <SIZE; i++)
-    myfile << i << "," <<TotalNodes[i].endTime << "," << TotalNodes[i].expirationTime << "," <<TotalNodes[i].executionTime << "," << TotalNodes[i].startedRunning <<"\n";
+  myfile << "NodeID,  End Time, ProcID, Expiration Time, Execution Time, Start Time\n";
+
+  for(int i=0; i <SIZE; i++){
+    string line = 
+    to_string(i) + "," +
+    to_string(TotalNodes[i].endTime) + "," +
+    to_string(procList.find(i)->second.getID()) + "," +
+    to_string(TotalNodes[i].expirationTime) + "," +
+    to_string(TotalNodes[i].executionTime) + "," + 
+    to_string(TotalNodes[i].startedRunning) + "\n";
+
+    myfile << line;
+  }
   myfile.close(); 
 }

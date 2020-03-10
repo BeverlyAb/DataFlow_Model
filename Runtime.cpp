@@ -1,6 +1,7 @@
 #include "Runtime.h"
-//g++ -o main main.o Runtime.o
-//g++ -c Runtime.cpp main.cpp
+//g++ -c Runtime.cpp main.cpp Processor.cpp
+//g++ -o main main.o Runtime.o Processor.o
+
 Runtime::Runtime(){
     globalClock = 0;
     percentageOfCon = 0; 
@@ -16,21 +17,11 @@ Runtime::Runtime( int percent){
     TotalNodes[i].executionTime = rand() % 10; 
     TotalNodes[i].startedRunning = 0;
     TotalNodes[i].endTime = 0;   
-    TotalNodes[i].expirationTime = setExpireTime;  
-    // unassignedTasks.insert(pair<int,int>(i,0));
-  }
+    TotalNodes[i].expirationTime = setExpireTime; 
 
-  for(int i = 0, j = PROC_SIZE-1; i < PROC_SIZE; i++,j--){
-   // map<int, int >::iterator found = unassignedTasks.find(rand()%unassignedTasks.size());
-   // while(found == unassignedTasks.end())
-    //   map<int, int >::iterator found = unassignedTasks.find(rand()%unassignedTasks.size());
-
-     // Processors.insert(pair<int, pair<int, int> >(i,pair<int,int>(AVAILABLE, found->first)));
-     Processors.insert(pair<int, pair<int, int> >(i,pair<int,int>(AVAILABLE, j)));
-      // unassignedTasks.erase(found);
-  }
-  // printf("tasks unassigned %lu\n", unassignedTasks.size());
-
+    //randomly assign Processor to task or node
+    procList.insert(pair<int,Processor>(i, Processor(rand() % PROC_SIZE, AVAILABLE))); 
+ }
 
   percentageOfCon = percent;
   setRandMatrix();
@@ -51,13 +42,13 @@ void Runtime::CheckReadyToRun(){
         j++;
         //tick();
       }
-      map<int,pair<int,int>>::iterator it = Processors.find()
+      
       if( allDependencyMet && 
-          runningPool.end() == find(runningPool.begin(), runningPool.end(), i &&
-          (Processors->first == i && && Processors->second->first = AVAILABLE)){
+          runningPool.end() == find(runningPool.begin(), runningPool.end(), i) &&
+          procList.find(i)->second.getStatus() == AVAILABLE){
 
         runningPool.push_back(i);
-        Processors->second->first = AVAILABLE
+        procList.find(i)->second.setStatus(UNAVAILABLE);
 
         if (DEBUG_TEST){
           printf("Time %f : \n", globalClock);
@@ -78,7 +69,8 @@ void Runtime::ScanRunningPool(){
       if(!reFire(nodeIndex)){
         ReleaseData(nodeIndex);
         runningPool.erase(remove(runningPool.begin(), runningPool.end(), nodeIndex), runningPool.end());
-      
+        procList.find(i)->second.setStatus(AVAILABLE);
+
         if (DEBUG_TEST){
           printf("Time %f : \n", globalClock);
           printf("Node: %i , size = %lu\n", nodeIndex, runningPool.size());
@@ -186,10 +178,10 @@ bool Runtime::reFire(int index){
  ---------- Print Methods ------------------------------------------------------------------------------------
 */
 void Runtime::printTotalNodes(){
-   printf("Time %f : \n", globalClock);
-  printf("ID\t Exec.\t\t Expire\t\t Start\t\t End\n");
+  printf("Time %f : \n", globalClock);
+  printf("ID\tEnd Time\tExpire\t\tExec. Time\tStart Time\n");
   for(int i = 0; i < SIZE; i++){
-    printf("%i:\t%f,\t%f,\t%f\t%f\n", i, TotalNodes[i].executionTime, TotalNodes[i].expirationTime, TotalNodes[i].startedRunning,TotalNodes[i].endTime);       
+    printf("%i:\t%f,\t%f,\t%f,\t%f\n,", i,TotalNodes[i].endTime, TotalNodes[i].expirationTime, TotalNodes[i].executionTime, TotalNodes[i].startedRunning);       
   }
   printf("\n");
 }
@@ -225,9 +217,11 @@ bool Runtime::isReachable(){
 void Runtime::exportToCSV()
 {
   ofstream myfile;
-  myfile.open ("TEST2.csv");
-  myfile << "NodeID, Execution Time, Start Time, End Time\n";
+  Time curTime = Time();
+  string fileName = "N" + to_string(SIZE) + "-" + curTime.getTime() + ".csv";
+  myfile.open (fileName);
+  myfile << "NodeID,  End Time, Expiration Time, Execution Time, Start Time\n";
   for(int i=0; i <SIZE; i++)
-    myfile << i << "," << TotalNodes[i].executionTime << "," << TotalNodes[i].startedRunning <<"," <<TotalNodes[i].endTime << "\n";
+    myfile << i << "," <<TotalNodes[i].endTime << "," << TotalNodes[i].expirationTime << "," <<TotalNodes[i].executionTime << "," << TotalNodes[i].startedRunning <<"\n";
   myfile.close(); 
 }

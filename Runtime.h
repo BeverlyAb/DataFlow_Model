@@ -1,11 +1,18 @@
 //Runtime.h
 #ifndef RUNTIME_H
 #define RUNTIME_H
-#define DEBUG_TEST 1
 
+#define DEBUG_TEST 1
 #define SIZE 8
+#define PROC_SIZE 8
+
+#define UNAVAILABLE 0
+#define AVAILABLE 1
+#define DEAD
+
 #include <stdlib.h>
 #include <vector>
+#include <map>
 #include <fstream>
 using namespace std;
 
@@ -28,6 +35,7 @@ class Runtime{
     struct timeTuples TotalNodes[SIZE];
     struct boolTuples Matrix[SIZE][SIZE];
 
+    map<int,pair<int,int> >Processors; //key : Proc ID, value: availability, task(s) 
     int percentageOfCon;
     vector<int> runningPool;
     vector<int> completedNodes; //nodes that finished running 

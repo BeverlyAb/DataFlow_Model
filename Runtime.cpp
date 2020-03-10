@@ -9,12 +9,29 @@ Runtime::Runtime(){
 Runtime::Runtime( int percent){
 
   int setExpireTime = rand()%9;
+  
+  map<int,int> unassignedTasks;
+
   for(int i = 0; i < SIZE; i++){
     TotalNodes[i].executionTime = rand() % 10; 
     TotalNodes[i].startedRunning = 0;
     TotalNodes[i].endTime = 0;   
     TotalNodes[i].expirationTime = setExpireTime;  
+    // unassignedTasks.insert(pair<int,int>(i,0));
   }
+
+  for(int i = 0, j = PROC_SIZE-1; i < PROC_SIZE; i++,j--){
+   // map<int, int >::iterator found = unassignedTasks.find(rand()%unassignedTasks.size());
+   // while(found == unassignedTasks.end())
+    //   map<int, int >::iterator found = unassignedTasks.find(rand()%unassignedTasks.size());
+
+     // Processors.insert(pair<int, pair<int, int> >(i,pair<int,int>(AVAILABLE, found->first)));
+     Processors.insert(pair<int, pair<int, int> >(i,pair<int,int>(AVAILABLE, j)));
+      // unassignedTasks.erase(found);
+  }
+  // printf("tasks unassigned %lu\n", unassignedTasks.size());
+
+
   percentageOfCon = percent;
   setRandMatrix();
   printMatrix();
@@ -34,11 +51,14 @@ void Runtime::CheckReadyToRun(){
         j++;
         //tick();
       }
+      map<int,pair<int,int>>::iterator it = Processors.find()
       if( allDependencyMet && 
-          runningPool.end() == find(runningPool.begin(), runningPool.end(), i)){
+          runningPool.end() == find(runningPool.begin(), runningPool.end(), i &&
+          (Processors->first == i && && Processors->second->first = AVAILABLE)){
 
         runningPool.push_back(i);
-        
+        Processors->second->first = AVAILABLE
+
         if (DEBUG_TEST){
           printf("Time %f : \n", globalClock);
           printTotalNodes();

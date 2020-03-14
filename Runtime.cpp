@@ -28,14 +28,12 @@ Runtime::Runtime( int percent){
     if(taskList.find(pID) == taskList.end()){
       v.push_back(i);
       taskList.insert(pair<int,vector<int> >(pID,v));
-      printf("newly added %i\n",i);
     } else{
       taskList.find(pID)->second.push_back(i);
-      printf("expanded %i to size %i\n",i, taskList.find(pID)->second.size());
     }
  }
 
- if(1){
+ if(DEBUG_TEST){
   for(map<int, Processor *>::iterator it = procList.begin(); it != procList.end(); it++)
     printf("TASK %i PID %i Availability %i\n", it->first, it->second->getID(), it->second->getStatus());
 

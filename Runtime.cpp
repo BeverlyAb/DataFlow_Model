@@ -20,7 +20,16 @@ Runtime::Runtime( int percent){
     TotalNodes[i].expirationTime = setExpireTime; 
 
     //randomly assign Processor to task or node
-    procList.insert(pair<int,Processor>(i, Processor(rand() % PROC_SIZE, AVAILABLE))); 
+    // if(procList.find(rand() % PROC_SIZE)->second.empty()){
+    //   vector<int> v;
+    //   procList.insert(pair<Processor, vector<int> >(Processor(rand() % PROC_SIZE, AVAILABLE),
+    //                   v.push_back(i))); 
+    // } else
+    // {
+    //   procList.insert(pair<Processor, vector<int> >(Processor(rand() % PROC_SIZE, AVAILABLE),
+    //                   procList.find(rand() % PROC_SIZE).push_back(i))); 
+    // }
+    
  }
 
   percentageOfCon = percent;
@@ -33,8 +42,7 @@ Runtime::Runtime( int percent){
 void Runtime::CheckReadyToRun(){
   for(int i = 0; i < SIZE; i++){
     //hasn't completed and its Proc is ready to run
-    if(completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i)
-    && procList.find(i)->second.getStatus() == AVAILABLE){
+    if(completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i)){
       bool allDependencyMet = true;
       int j = 0;
 
@@ -44,14 +52,11 @@ void Runtime::CheckReadyToRun(){
         j++;
         //tick();
       }
-      procList.find(i)->second.setStatus(UNAVAILABLE);
-      printf("Checking Node %i, Proc %i\n",i,procList.find(i)->second.getID());
+
       if( allDependencyMet && 
           runningPool.end() == find(runningPool.begin(), runningPool.end(), i)){
 
         runningPool.push_back(i);
-        
-        printf("Set Unavailable Node:%i, %i\n",i,procList.find(i)->second.getStatus());
 
         if (DEBUG_TEST){
           printf("Time %f : \n", globalClock);
@@ -72,7 +77,7 @@ void Runtime::ScanRunningPool(){
       if(!reFire(nodeIndex)){
         ReleaseData(nodeIndex);
         runningPool.erase(remove(runningPool.begin(), runningPool.end(), nodeIndex), runningPool.end());
-        procList.find(i)->second.setStatus(AVAILABLE);
+
 
         // printf("Freed Node %i, Proc %i\n",i,find.(i)->second.getStatus());
         if (DEBUG_TEST){
@@ -183,7 +188,7 @@ void Runtime::printTotalNodes(){
   printf("Time %f : \n", globalClock);
   printf("NodeID\tEnd Time\tProcID\tExpire\t\tExec. Time\tStart Time\n");
   for(int i = 0; i < SIZE; i++){
-    printf("%i:\t%f,\t%i,\t%f,\t%f,\t%f\n", i,TotalNodes[i].endTime, procList.find(i)->second.getID(), TotalNodes[i].expirationTime, TotalNodes[i].executionTime, TotalNodes[i].startedRunning);       
+    printf("%i:\t%f,\t%f,\t%f,\t%f\n", i,TotalNodes[i].endTime,/* procList.find(i)->second.getID(),*/ TotalNodes[i].expirationTime, TotalNodes[i].executionTime, TotalNodes[i].startedRunning);       
   }
   printf("\n");
 }
@@ -228,7 +233,7 @@ void Runtime::exportToCSV()
     string line = 
     to_string(i) + "," +
     to_string(TotalNodes[i].endTime) + "," +
-    to_string(procList.find(i)->second.getID()) + "," +
+   // to_string(procList.find(i)->second.getID()) + "," +
     to_string(TotalNodes[i].expirationTime) + "," +
     to_string(TotalNodes[i].executionTime) + "," + 
     to_string(TotalNodes[i].startedRunning) + "\n";

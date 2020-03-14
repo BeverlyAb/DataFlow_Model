@@ -19,5 +19,6 @@ class Processor{
     void setStatus(int stat) { Status = stat;}
     int getID(){ return ProcessorId; }
     int getStatus(){ return Status; }
+    inline bool operator< (const Processor rhs) const {return ProcessorId < rhs.ProcessorId; }
   };
 #endif

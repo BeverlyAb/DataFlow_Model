@@ -2,9 +2,9 @@
 #ifndef RUNTIME_H
 #define RUNTIME_H
 
-#define DEBUG_TEST 1
+#define DEBUG_TEST 0
 #define SIZE 8
-#define PROC_SIZE 8
+#define PROC_SIZE 2
 
 #include <stdlib.h>
 #include <vector>
@@ -33,8 +33,7 @@ class Runtime{
     struct timeTuples TotalNodes[SIZE];
     struct boolTuples Matrix[SIZE][SIZE];
 
-    map<vector<int>, int>procTask; //key : pID, values : 
-    map<int, int> procAvailability; //key : pID, values : availbility
+    map<int, Processor>procList; //key : task, value: ProcessorID, availability
     int percentageOfCon;
     vector<int> runningPool;
     vector<int> completedNodes; //nodes that finished running 

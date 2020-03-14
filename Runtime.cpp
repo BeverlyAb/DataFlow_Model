@@ -14,23 +14,13 @@ Runtime::Runtime( int percent){
   map<int,int> unassignedTasks;
 
   for(int i = 0; i < SIZE; i++){
-    TotalNodes[i].executionTime = rand() % 10; 
+    TotalNodes[i].executionTime = 2;//rand() % 10; 
     TotalNodes[i].startedRunning = 0;
     TotalNodes[i].endTime = 0;   
     TotalNodes[i].expirationTime = setExpireTime; 
 
     //randomly assign Processor to task or node
-    int pID = rand() % PROC_SIZE;
-    vector<int> v;
-    if(!procTask.empty() && !procTask.find(pID)->second.empty()){
-      vector<int> v = procTask.find(pID)->second;
-    }
-
-    v.push_back(i);
-    procTask.insert(pair<int, vector<int> >(pID,v)); 
-    
-    //set all Processor to available
-    procAvailability.insert(pair<int,int> (pID, AVAILABLE));
+    procList.insert(pair<int,Processor>(i, Processor(rand() % PROC_SIZE, AVAILABLE))); 
  }
 
   percentageOfCon = percent;
@@ -42,7 +32,9 @@ Runtime::Runtime( int percent){
 //excludes completedNodes. note that nodes without any fwdCon are "ready to run"
 void Runtime::CheckReadyToRun(){
   for(int i = 0; i < SIZE; i++){
-    if(completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i)){
+    //hasn't completed and its Proc is ready to run
+    if(completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i)
+    && procList.find(i)->second.getStatus() == AVAILABLE){
       bool allDependencyMet = true;
       int j = 0;
 
@@ -52,13 +44,14 @@ void Runtime::CheckReadyToRun(){
         j++;
         //tick();
       }
-      
+      procList.find(i)->second.setStatus(UNAVAILABLE);
+      printf("Checking Node %i, Proc %i\n",i,procList.find(i)->second.getID());
       if( allDependencyMet && 
-          runningPool.end() == find(runningPool.begin(), runningPool.end(), i) &&
-          procList.find(i)->second.getStatus() == AVAILABLE){
+          runningPool.end() == find(runningPool.begin(), runningPool.end(), i)){
 
         runningPool.push_back(i);
-        procList.find(i)->second.setStatus(UNAVAILABLE);
+        
+        printf("Set Unavailable Node:%i, %i\n",i,procList.find(i)->second.getStatus());
 
         if (DEBUG_TEST){
           printf("Time %f : \n", globalClock);
@@ -66,7 +59,7 @@ void Runtime::CheckReadyToRun(){
         }
         setEndTime(i);
         //printf("Node pushedback %i Total size %lu\n",i, runningPool.size());
-      }
+      } 
     }
   }
 }
@@ -79,7 +72,7 @@ void Runtime::ScanRunningPool(){
       if(!reFire(nodeIndex)){
         ReleaseData(nodeIndex);
         runningPool.erase(remove(runningPool.begin(), runningPool.end(), nodeIndex), runningPool.end());
-
+        procList.find(i)->second.setStatus(AVAILABLE);
 
         // printf("Freed Node %i, Proc %i\n",i,find.(i)->second.getStatus());
         if (DEBUG_TEST){
@@ -174,10 +167,8 @@ bool Runtime::reFire(int index){
     TotalNodes[index].startedRunning = globalClock;
     
     setEndTime(index);
-    printf("REFIRED %i\n", index);
-    
-    if(DEBUG_TEST) {
-      
+    if(DEBUG_TEST) {    
+      printf("REFIRED %i\n", index);
       printTotalNodes();
     }
     return true;
@@ -192,7 +183,7 @@ void Runtime::printTotalNodes(){
   printf("Time %f : \n", globalClock);
   printf("NodeID\tEnd Time\tProcID\tExpire\t\tExec. Time\tStart Time\n");
   for(int i = 0; i < SIZE; i++){
-    printf("%i:\t%f,\t%f,\t%f,\t%f\n", i,TotalNodes[i].endTime,/* procList.find(i)->second.getID(),*/ TotalNodes[i].expirationTime, TotalNodes[i].executionTime, TotalNodes[i].startedRunning);       
+    printf("%i:\t%f,\t%i,\t%f,\t%f,\t%f\n", i,TotalNodes[i].endTime, procList.find(i)->second.getID(), TotalNodes[i].expirationTime, TotalNodes[i].executionTime, TotalNodes[i].startedRunning);       
   }
   printf("\n");
 }
@@ -237,7 +228,7 @@ void Runtime::exportToCSV()
     string line = 
     to_string(i) + "," +
     to_string(TotalNodes[i].endTime) + "," +
-   // to_string(procList.find(i)->second.getID()) + "," +
+    to_string(procList.find(i)->second.getID()) + "," +
     to_string(TotalNodes[i].expirationTime) + "," +
     to_string(TotalNodes[i].executionTime) + "," + 
     to_string(TotalNodes[i].startedRunning) + "\n";

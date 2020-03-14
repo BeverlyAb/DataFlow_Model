@@ -10,15 +10,14 @@
 class Processor{
 
   private:
-    map<int, vector<int> >procTask; //key : pID, values : tasks
-    map<int, int> procAvailability; //key : pID, values : availbility
+    int ProcessorId;
+    int Status;
 
   public:
     Processor();
-    Processor(int taskSize, int procSize);
-    // void setStatus(int stat) { Status = stat;}
-    // int getID(){ return ProcessorId; }
-    // int getStatus(){ return Status; }
-    // inline bool operator< (const Processor rhs) const {return ProcessorId < rhs.ProcessorId; }
+    Processor(int id, int stat);
+    void setStatus(int stat) { Status = stat;}
+    int getID(){ return ProcessorId; }
+    int getStatus(){ return Status; }
   };
 #endif

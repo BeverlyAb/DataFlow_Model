@@ -1,12 +1,17 @@
 //Runtime.h
 #ifndef RUNTIME_H
 #define RUNTIME_H
-#define DEBUG_TEST 1
 
-#define SIZE 8
+#define DEBUG_TEST 0
+#define SIZE 80
+#define PROC_SIZE 2
+
 #include <stdlib.h>
 #include <vector>
+#include <map>
 #include <fstream>
+#include "Processor.h"
+#include "Time.h"
 using namespace std;
 
 class Runtime{
@@ -27,6 +32,10 @@ class Runtime{
   private:
     struct timeTuples TotalNodes[SIZE];
     struct boolTuples Matrix[SIZE][SIZE];
+
+    Processor assignedProc[PROC_SIZE]; // Procesor Objects
+    map<int, Processor *>procList; //key : task, value: ProcessorID, availability
+    map<int, vector<int> > taskList; // key : PID, value: list of assigned tasks
 
     int percentageOfCon;
     vector<int> runningPool;
@@ -72,6 +81,9 @@ class Runtime{
     
     /*node refires when it expires before it completes it execution. Expiration time gets doubled*/
     bool reFire(int index);
+
+    /*returns true if the current node passes information to another node under the same Processor*/
+    bool isContinuingNode(int pID, int nextTask);
 
     void exportToCSV();
     //debugging methods

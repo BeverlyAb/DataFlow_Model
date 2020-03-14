@@ -19,5 +19,8 @@ class Processor{
     void setStatus(int stat) { Status = stat;}
     int getID(){ return ProcessorId; }
     int getStatus(){ return Status; }
+    bool operator()(Processor & left, Processor & right)  {
+        return left.getID() < right.getID();
+    }
   };
 #endif

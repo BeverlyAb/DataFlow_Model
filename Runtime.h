@@ -33,8 +33,9 @@ class Runtime{
     struct timeTuples TotalNodes[SIZE];
     struct boolTuples Matrix[SIZE][SIZE];
 
+    Processor assignedProc[PROC_SIZE]; // Procesor Objects
     map<int, Processor *>procList; //key : task, value: ProcessorID, availability
-    Processor assignedProc[PROC_SIZE]; 
+    map<int, vector<int> > taskList; // key : PID, value: list of assigned tasks
 
     int percentageOfCon;
     vector<int> runningPool;
@@ -80,6 +81,9 @@ class Runtime{
     
     /*node refires when it expires before it completes it execution. Expiration time gets doubled*/
     bool reFire(int index);
+
+    /*returns true if the current node passes information to another node under the same Processor*/
+    bool isContinuingNode(int pID, int nextTask);
 
     void exportToCSV();
     //debugging methods

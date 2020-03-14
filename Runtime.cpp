@@ -11,9 +11,6 @@ Runtime::Runtime( int percent){
 
   int setExpireTime = rand()%9;
   
-  map<int,int> unassignedTasks;
-  
-  
   for(int i = 0; i < PROC_SIZE; i++)
     assignedProc[i] = Processor(i,AVAILABLE);
   
@@ -26,6 +23,13 @@ Runtime::Runtime( int percent){
     //randomly assign Processor to task or node
     int pID = rand() % PROC_SIZE;
     procList.insert(pair<int,Processor *>(i, &assignedProc[pID])); 
+
+    vector<int> v;
+    if(!taskList.empty() && !taskList.find(pID)->second.empty()){
+      v = taskList.find(i)->second;
+    }
+    v.push_back(i);
+    taskList.insert(pair<int,vector<int> >(pID,v));
  }
 
  if(DEBUG_TEST){
@@ -43,7 +47,9 @@ void Runtime::CheckReadyToRun(){
   for(int i = 0; i < SIZE; i++){
 
     //hasn't completed and its Proc is ready to run
-    if(completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i)){
+    if((completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i)
+    &&(procList.find(i)->second->getStatus() == AVAILABLE))
+    || isContinuingNode(procList.find(i)->second->getID(),i) ){
       bool allDependencyMet = true;
       int j = 0;
 
@@ -54,9 +60,7 @@ void Runtime::CheckReadyToRun(){
         //tick();
       }
       if( allDependencyMet && 
-          runningPool.end() == find(runningPool.begin(), runningPool.end(), i)
-           && procList.find(i)->second->getStatus() == AVAILABLE ){
-
+          runningPool.end() == find(runningPool.begin(), runningPool.end(), i)){
         runningPool.push_back(i);
         procList.find(i)->second->setStatus(UNAVAILABLE);
 
@@ -184,7 +188,14 @@ bool Runtime::reFire(int index){
   } else
     return false; 
 }
-
+bool Runtime::isContinuingNode(int pID, int nextTask){
+  
+  for(int i = 0; i < taskList.find(pID)->second.size();i++){
+    if(nextTask == taskList.find(pID)->second[i]) 
+    return true;
+  }
+  return false;
+}
 /*
  ---------- Print Methods ------------------------------------------------------------------------------------
 */

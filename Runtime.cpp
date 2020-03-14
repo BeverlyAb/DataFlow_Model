@@ -20,11 +20,12 @@ Runtime::Runtime( int percent){
     TotalNodes[i].expirationTime = setExpireTime; 
 
     //randomly assign Processor to task or node
-    // if(procList.find(rand() % PROC_SIZE)->second.empty()){
-    //   vector<int> v;
-    //   procList.insert(pair<Processor, vector<int> >(Processor(rand() % PROC_SIZE, AVAILABLE),
-    //                   v.push_back(i))); 
-    // } else
+    if(procList.empty() || procList.find(rand() % PROC_SIZE)->second.empty()){
+      vector<int> v;
+      v.push_back(i);
+      procList.insert(pair<Processor, vector<int> >(Processor(rand() % PROC_SIZE, AVAILABLE),v)); 
+    }
+  //else
     // {
     //   procList.insert(pair<Processor, vector<int> >(Processor(rand() % PROC_SIZE, AVAILABLE),
     //                   procList.find(rand() % PROC_SIZE).push_back(i))); 

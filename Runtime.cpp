@@ -14,7 +14,7 @@ Runtime::Runtime( int percent){
   map<int,int> unassignedTasks;
 
   for(int i = 0; i < SIZE; i++){
-    TotalNodes[i].executionTime = 2;//rand() % 10; 
+    TotalNodes[i].executionTime = rand() % 10; 
     TotalNodes[i].startedRunning = 0;
     TotalNodes[i].endTime = 0;   
     TotalNodes[i].expirationTime = setExpireTime; 
@@ -42,8 +42,7 @@ Runtime::Runtime( int percent){
 //excludes completedNodes. note that nodes without any fwdCon are "ready to run"
 void Runtime::CheckReadyToRun(){
   for(int i = 0; i < SIZE; i++){
-    //hasn't completed and its Proc is ready to run
-    if(completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i &&)){
+    if(completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i)){
       bool allDependencyMet = true;
       int j = 0;
 
@@ -53,11 +52,13 @@ void Runtime::CheckReadyToRun(){
         j++;
         //tick();
       }
-
+      
       if( allDependencyMet && 
-          runningPool.end() == find(runningPool.begin(), runningPool.end(), i)){
+          runningPool.end() == find(runningPool.begin(), runningPool.end(), i) &&
+          procList.find(i)->second.getStatus() == AVAILABLE){
 
         runningPool.push_back(i);
+        procList.find(i)->second.setStatus(UNAVAILABLE);
 
         if (DEBUG_TEST){
           printf("Time %f : \n", globalClock);
@@ -65,7 +66,7 @@ void Runtime::CheckReadyToRun(){
         }
         setEndTime(i);
         //printf("Node pushedback %i Total size %lu\n",i, runningPool.size());
-      } 
+      }
     }
   }
 }
@@ -173,8 +174,10 @@ bool Runtime::reFire(int index){
     TotalNodes[index].startedRunning = globalClock;
     
     setEndTime(index);
-    if(DEBUG_TEST) {    
-      printf("REFIRED %i\n", index);
+    printf("REFIRED %i\n", index);
+    
+    if(DEBUG_TEST) {
+      
       printTotalNodes();
     }
     return true;

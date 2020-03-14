@@ -2,9 +2,9 @@
 #ifndef RUNTIME_H
 #define RUNTIME_H
 
-#define DEBUG_TEST 0
+#define DEBUG_TEST 1
 #define SIZE 8
-#define PROC_SIZE 2
+#define PROC_SIZE 8
 
 #include <stdlib.h>
 #include <vector>

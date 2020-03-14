@@ -43,7 +43,7 @@ Runtime::Runtime( int percent){
 void Runtime::CheckReadyToRun(){
   for(int i = 0; i < SIZE; i++){
     //hasn't completed and its Proc is ready to run
-    if(completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i)){
+    if(completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i &&)){
       bool allDependencyMet = true;
       int j = 0;
 

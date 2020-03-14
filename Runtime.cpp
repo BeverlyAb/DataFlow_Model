@@ -15,7 +15,7 @@ Runtime::Runtime( int percent){
     assignedProc[i] = Processor(i,AVAILABLE);
   
   for(int i = 0; i < SIZE; i++){
-    TotalNodes[i].executionTime = 2;//rand() % 10; 
+    TotalNodes[i].executionTime = 3;//rand() % 10; 
     TotalNodes[i].startedRunning = 0;
     TotalNodes[i].endTime = 0;   
     TotalNodes[i].expirationTime = setExpireTime; 
@@ -57,8 +57,7 @@ void Runtime::CheckReadyToRun(){
 
     //hasn't completed and its Proc is ready to run
     if(completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i)
-    &&(procList.find(i)->second->getStatus() == AVAILABLE
-    || isContinuingNode(procList.find(i)->second->getID(),i)) ){
+    && procList.find(i)->second->getStatus() == AVAILABLE){
       bool allDependencyMet = true;
       int j = 0;
 
@@ -72,6 +71,7 @@ void Runtime::CheckReadyToRun(){
           runningPool.end() == find(runningPool.begin(), runningPool.end(), i)){
         runningPool.push_back(i);
         procList.find(i)->second->setStatus(UNAVAILABLE);
+
 
         if (DEBUG_TEST){
           printf("Time %f : \n", globalClock);
@@ -90,9 +90,7 @@ void Runtime::ScanRunningPool(){
     if(TotalNodes[nodeIndex].endTime <= globalClock){
       if(!reFire(nodeIndex)){
         ReleaseData(nodeIndex);
-        runningPool.erase(remove(runningPool.begin(), runningPool.end(), nodeIndex), runningPool.end());
-        procList.find(i)->second->setStatus(AVAILABLE);
-
+        runningPool.erase(remove(runningPool.begin(), runningPool.end(), nodeIndex), runningPool.end());     
         // printf("Freed Node %i, Proc %i\n",i,find.(i)->second.getStatus());
         if (DEBUG_TEST){
           printf("Time %f : \n", globalClock);
@@ -101,7 +99,7 @@ void Runtime::ScanRunningPool(){
         
       }
     }
-    tick();
+    // tick();
   }
   if(DEBUG_TEST){
     for(map<int, Processor *>::iterator it = procList.begin(); it != procList.end(); it++)
@@ -120,7 +118,7 @@ void Runtime::ReleaseData(int index){
     }
    // tick();
   }
-
+  procList.find(index)->second->setStatus(AVAILABLE);
   completedNodes.push_back(index);
 }
 
@@ -131,6 +129,7 @@ void Runtime::Run(){
     CheckReadyToRun();
     if(!isReachable())
       break;
+    tick();
   }
   printf("All done\n Nodes Completed %lu\n Total Time %f\n", 
   completedNodes.size(), globalClock);
@@ -203,8 +202,10 @@ bool Runtime::isContinuingNode(int pID, int nextTask){
   
   for(int i = 0; i < taskList.find(pID)->second.size();i++){
   //  printf("pID %i Tasks %i\n", pID, taskList.find(pID)->second[i]);
-    if(nextTask == taskList.find(pID)->second[i]) 
-    return true;
+    if(nextTask == taskList.find(pID)->second[i]) {
+      
+      return true;
+    }
   }
   return false;
 }

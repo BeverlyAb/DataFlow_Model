@@ -28,6 +28,10 @@ Runtime::Runtime( int percent){
     procList.insert(pair<int,Processor *>(i, &assignedProc[pID])); 
  }
 
+ if(DEBUG_TEST){
+  for(map<int, Processor *>::iterator it = procList.begin(); it != procList.end(); it++)
+    printf("TASK %i PID %i Availability %i\n", it->first, it->second->getID(), it->second->getStatus());
+ }
   percentageOfCon = percent;
   setRandMatrix();
   printMatrix();
@@ -37,9 +41,9 @@ Runtime::Runtime( int percent){
 //excludes completedNodes. note that nodes without any fwdCon are "ready to run"
 void Runtime::CheckReadyToRun(){
   for(int i = 0; i < SIZE; i++){
+
     //hasn't completed and its Proc is ready to run
-    if(completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i)
-    && procList.find(i)->second->getStatus() == AVAILABLE){
+    if(completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i)){
       bool allDependencyMet = true;
       int j = 0;
 
@@ -49,23 +53,19 @@ void Runtime::CheckReadyToRun(){
         j++;
         //tick();
       }
-       
-      // printf("Checking Node %i, Proc %i\n",i,procList.find(i)->second.getID());
       if( allDependencyMet && 
           runningPool.end() == find(runningPool.begin(), runningPool.end(), i)
-          && procList.find(i)->second->getStatus() == AVAILABLE){
+           && procList.find(i)->second->getStatus() == AVAILABLE ){
 
         runningPool.push_back(i);
         procList.find(i)->second->setStatus(UNAVAILABLE);
+
         if (DEBUG_TEST){
           printf("Time %f : \n", globalClock);
           printTotalNodes();
         }
         setEndTime(i);
-        //printf("Node pushedback %i Total size %lu\n",i, runningPool.size());
-      } else{
-        procList.find(i)->second->setStatus(AVAILABLE); 
-      }
+      } 
     }
   }
 }
@@ -85,11 +85,14 @@ void Runtime::ScanRunningPool(){
           printf("Time %f : \n", globalClock);
           printf("Node: %i , size = %lu\n", nodeIndex, runningPool.size());
         }
-      //  printTotalNodes();
+        
       }
     }
     tick();
   }
+  for(map<int, Processor *>::iterator it = procList.begin(); it != procList.end(); it++)
+    printf("TASK %i PID %i Availability %i\n", it->first, it->second->getID(), it->second->getStatus());
+  printf("procList size %lu\n", procList.size());
 }
 
 void Runtime::ReleaseData(int index){
@@ -119,8 +122,8 @@ void Runtime::Run(){
   
   if(DEBUG_TEST)
     printTotalNodes();
-
-  exportToCSV();
+  else
+    exportToCSV();
 }
 
 void Runtime::setEndTime(int index)

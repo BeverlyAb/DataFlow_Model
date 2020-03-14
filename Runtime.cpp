@@ -45,6 +45,7 @@ void Runtime::CheckReadyToRun(){
         //tick();
       }
       procList.find(i)->second.setStatus(UNAVAILABLE);
+      printf("Checking Node %i, Proc %i\n",i,procList.find(i)->second.getID());
       if( allDependencyMet && 
           runningPool.end() == find(runningPool.begin(), runningPool.end(), i)){
 
@@ -58,11 +59,7 @@ void Runtime::CheckReadyToRun(){
         }
         setEndTime(i);
         //printf("Node pushedback %i Total size %lu\n",i, runningPool.size());
-      } else
-      {
-        procList.find(i)->second.setStatus(AVAILABLE);
-      }
-      
+      } 
     }
   }
 }
@@ -77,6 +74,7 @@ void Runtime::ScanRunningPool(){
         runningPool.erase(remove(runningPool.begin(), runningPool.end(), nodeIndex), runningPool.end());
         procList.find(i)->second.setStatus(AVAILABLE);
 
+        // printf("Freed Node %i, Proc %i\n",i,find.(i)->second.getStatus());
         if (DEBUG_TEST){
           printf("Time %f : \n", globalClock);
           printf("Node: %i , size = %lu\n", nodeIndex, runningPool.size());

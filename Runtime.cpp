@@ -12,7 +12,11 @@ Runtime::Runtime( int percent){
   int setExpireTime = rand()%9;
   
   map<int,int> unassignedTasks;
-
+  
+  
+  for(int i = 0; i < PROC_SIZE; i++)
+    assignedProc[i] = Processor(i,AVAILABLE);
+  
   for(int i = 0; i < SIZE; i++){
     TotalNodes[i].executionTime = 2;//rand() % 10; 
     TotalNodes[i].startedRunning = 0;
@@ -20,7 +24,8 @@ Runtime::Runtime( int percent){
     TotalNodes[i].expirationTime = setExpireTime; 
 
     //randomly assign Processor to task or node
-    procList.insert(pair<int,Processor>(i, Processor(rand() % PROC_SIZE, AVAILABLE))); 
+    int pID = rand() % PROC_SIZE;
+    procList.insert(pair<int,Processor *>(i, &assignedProc[pID])); 
  }
 
   percentageOfCon = percent;
@@ -34,7 +39,7 @@ void Runtime::CheckReadyToRun(){
   for(int i = 0; i < SIZE; i++){
     //hasn't completed and its Proc is ready to run
     if(completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i)
-    && procList.find(i)->second.getStatus() == AVAILABLE){
+    && procList.find(i)->second->getStatus() == AVAILABLE){
       bool allDependencyMet = true;
       int j = 0;
 
@@ -44,22 +49,23 @@ void Runtime::CheckReadyToRun(){
         j++;
         //tick();
       }
-      procList.find(i)->second.setStatus(UNAVAILABLE);
-      printf("Checking Node %i, Proc %i\n",i,procList.find(i)->second.getID());
+       
+      // printf("Checking Node %i, Proc %i\n",i,procList.find(i)->second.getID());
       if( allDependencyMet && 
-          runningPool.end() == find(runningPool.begin(), runningPool.end(), i)){
+          runningPool.end() == find(runningPool.begin(), runningPool.end(), i)
+          && procList.find(i)->second->getStatus() == AVAILABLE){
 
         runningPool.push_back(i);
-        
-        printf("Set Unavailable Node:%i, %i\n",i,procList.find(i)->second.getStatus());
-
+        procList.find(i)->second->setStatus(UNAVAILABLE);
         if (DEBUG_TEST){
           printf("Time %f : \n", globalClock);
           printTotalNodes();
         }
         setEndTime(i);
         //printf("Node pushedback %i Total size %lu\n",i, runningPool.size());
-      } 
+      } else{
+        procList.find(i)->second->setStatus(AVAILABLE); 
+      }
     }
   }
 }
@@ -72,7 +78,7 @@ void Runtime::ScanRunningPool(){
       if(!reFire(nodeIndex)){
         ReleaseData(nodeIndex);
         runningPool.erase(remove(runningPool.begin(), runningPool.end(), nodeIndex), runningPool.end());
-        procList.find(i)->second.setStatus(AVAILABLE);
+        procList.find(i)->second->setStatus(AVAILABLE);
 
         // printf("Freed Node %i, Proc %i\n",i,find.(i)->second.getStatus());
         if (DEBUG_TEST){
@@ -183,7 +189,7 @@ void Runtime::printTotalNodes(){
   printf("Time %f : \n", globalClock);
   printf("NodeID\tEnd Time\tProcID\tExpire\t\tExec. Time\tStart Time\n");
   for(int i = 0; i < SIZE; i++){
-    printf("%i:\t%f,\t%i,\t%f,\t%f,\t%f\n", i,TotalNodes[i].endTime, procList.find(i)->second.getID(), TotalNodes[i].expirationTime, TotalNodes[i].executionTime, TotalNodes[i].startedRunning);       
+    printf("%i:\t%f,\t%i\t%f,\t%f,\t%f\n", i,TotalNodes[i].endTime, procList.find(i)->second->getID(), TotalNodes[i].expirationTime, TotalNodes[i].executionTime, TotalNodes[i].startedRunning);       
   }
   printf("\n");
 }
@@ -205,11 +211,13 @@ bool Runtime::isReachable(){
         
         for(int j = 0; j < SIZE; j++){
           if( Matrix[i][j].fwdCon && !Matrix[i][j].enabled &&
-              find(runningPool.begin(), runningPool.end(), j) != runningPool.end() )
+              find(runningPool.begin(), runningPool.end(), j) != runningPool.end() ){
               return true;
+          }
         }
       }
     }
+    
     printf("Unreachable\n");
     return false;
   } else
@@ -228,7 +236,7 @@ void Runtime::exportToCSV()
     string line = 
     to_string(i) + "," +
     to_string(TotalNodes[i].endTime) + "," +
-    to_string(procList.find(i)->second.getID()) + "," +
+    to_string(procList.find(i)->second->getID()) + "," +
     to_string(TotalNodes[i].expirationTime) + "," +
     to_string(TotalNodes[i].executionTime) + "," + 
     to_string(TotalNodes[i].startedRunning) + "\n";

@@ -20,17 +20,17 @@ Runtime::Runtime( int percent){
     TotalNodes[i].expirationTime = setExpireTime; 
 
     //randomly assign Processor to task or node
-    if(procList.empty() || procList.find(rand() % PROC_SIZE)->second.empty()){
-      vector<int> v;
-      v.push_back(i);
-      procList.insert(pair<Processor, vector<int> >(Processor(rand() % PROC_SIZE, AVAILABLE),v)); 
+    int pID = rand() % PROC_SIZE;
+    vector<int> v;
+    if(!procTask.empty() && !procTask.find(pID)->second.empty()){
+      vector<int> v = procTask.find(pID)->second;
     }
-  //else
-    // {
-    //   procList.insert(pair<Processor, vector<int> >(Processor(rand() % PROC_SIZE, AVAILABLE),
-    //                   procList.find(rand() % PROC_SIZE).push_back(i))); 
-    // }
+
+    v.push_back(i);
+    procTask.insert(pair<int, vector<int> >(pID,v)); 
     
+    //set all Processor to available
+    procAvailability.insert(pair<int,int> (pID, AVAILABLE));
  }
 
   percentageOfCon = percent;

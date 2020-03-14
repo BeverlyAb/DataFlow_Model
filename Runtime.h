@@ -33,7 +33,8 @@ class Runtime{
     struct timeTuples TotalNodes[SIZE];
     struct boolTuples Matrix[SIZE][SIZE];
 
-    map<Processor, vector<int> >procList; //key : task, value: ProcessorID, availability
+    map<int, vector<int> >procTask; //key : pID, values : tasks
+    map<int, int> procAvailability; //key : pID, values : availbility
     int percentageOfCon;
     vector<int> runningPool;
     vector<int> completedNodes; //nodes that finished running 

@@ -33,7 +33,7 @@ Runtime::Runtime( int percent){
     }
  }
 
- if(DEBUG_TEST){
+ if(DEBUG_TEST && 0){
   for(map<int, Processor *>::iterator it = procList.begin(); it != procList.end(); it++)
     printf("TASK %i PID %i Availability %i\n", it->first, it->second->getID(), it->second->getStatus());
 

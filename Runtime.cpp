@@ -25,16 +25,27 @@ Runtime::Runtime( int percent){
     procList.insert(pair<int,Processor *>(i, &assignedProc[pID])); 
 
     vector<int> v;
-    if(!taskList.empty() && !taskList.find(pID)->second.empty()){
-      v = taskList.find(i)->second;
+    if(taskList.find(pID) == taskList.end()){
+      v.push_back(i);
+      taskList.insert(pair<int,vector<int> >(pID,v));
+      printf("newly added %i\n",i);
+    } else{
+      taskList.find(pID)->second.push_back(i);
+      printf("expanded %i to size %i\n",i, taskList.find(pID)->second.size());
     }
-    v.push_back(i);
-    taskList.insert(pair<int,vector<int> >(pID,v));
  }
 
- if(DEBUG_TEST){
+ if(1){
   for(map<int, Processor *>::iterator it = procList.begin(); it != procList.end(); it++)
     printf("TASK %i PID %i Availability %i\n", it->first, it->second->getID(), it->second->getStatus());
+
+  for(map<int, vector<int> >::iterator it = taskList.begin(); it != taskList.end(); it++){
+    printf("pid %i\n", it->first);
+    for(int i = 0; i < it->second.size(); i++){
+      printf("task %i ",it->second[i]);
+    }
+    printf("\n");
+  }
  }
   percentageOfCon = percent;
   setRandMatrix();
@@ -47,9 +58,9 @@ void Runtime::CheckReadyToRun(){
   for(int i = 0; i < SIZE; i++){
 
     //hasn't completed and its Proc is ready to run
-    if((completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i)
-    &&(procList.find(i)->second->getStatus() == AVAILABLE))
-    || isContinuingNode(procList.find(i)->second->getID(),i) ){
+    if(completedNodes.end() == find(completedNodes.begin(), completedNodes.end(), i)
+    &&(procList.find(i)->second->getStatus() == AVAILABLE
+    || isContinuingNode(procList.find(i)->second->getID(),i)) ){
       bool allDependencyMet = true;
       int j = 0;
 
@@ -94,9 +105,11 @@ void Runtime::ScanRunningPool(){
     }
     tick();
   }
-  for(map<int, Processor *>::iterator it = procList.begin(); it != procList.end(); it++)
-    printf("TASK %i PID %i Availability %i\n", it->first, it->second->getID(), it->second->getStatus());
-  printf("procList size %lu\n", procList.size());
+  if(DEBUG_TEST){
+    for(map<int, Processor *>::iterator it = procList.begin(); it != procList.end(); it++)
+      printf("TASK %i PID %i Availability %i\n", it->first, it->second->getID(), it->second->getStatus());
+    printf("procList size %lu\n", procList.size());
+    }
 }
 
 void Runtime::ReleaseData(int index){
@@ -191,6 +204,7 @@ bool Runtime::reFire(int index){
 bool Runtime::isContinuingNode(int pID, int nextTask){
   
   for(int i = 0; i < taskList.find(pID)->second.size();i++){
+  //  printf("pID %i Tasks %i\n", pID, taskList.find(pID)->second[i]);
     if(nextTask == taskList.find(pID)->second[i]) 
     return true;
   }
